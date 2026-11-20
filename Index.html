@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Very Important Question</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="timer" id="timer" role="timer" aria-label="Time left">
+  <svg viewBox="0 0 100 100" aria-hidden="true">
+    <circle class="face" cx="50" cy="50" r="46"/>
+    <g class="ticks" id="ticks"></g>
+    <circle class="track" cx="50" cy="50" r="38"/>
+    <circle class="ring" id="ring" cx="50" cy="50" r="38" pathLength="100" transform="rotate(-90 50 50)"/>
+    <line class="hand" id="hand" x1="50" y1="50" x2="50" y2="20"/>
+    <circle class="pin" cx="50" cy="50" r="3.5"/>
+  </svg>
+  <span class="digits" id="digits">1:00</span>
+</div>
+
+<div class="card" id="card">
+  <h1 id="title"> Quick Question just for you </h1>
+  <div id="question">Will you go on a date with me? 👀</div>
+
+  <div class="buttons" id="buttons">
+    <button id="yesBtn" type="button">Yes </button>
+    <button id="noBtn" type="button">No</button>
+  </div>
+
+  <div id="result"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

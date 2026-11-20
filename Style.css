@@ -1,43 +1,153 @@
 * { box-sizing: border-box; }
 
+/* ---------- THEMES ---------- */
+:root {                       /* default: rose */
+  --bg-glow1: rgba(255, 235, 236, 0.75);
+  --bg-glow2: rgba(255, 120, 135, 0.55);
+  --bg-a: #ff8f9b; --bg-b: #ffb3ba; --bg-c: #ffd0d4;
+  --card: rgba(255, 246, 241, 0.96);
+  --card-edge: rgba(201, 150, 120, 0.5);
+  --shadow: rgba(140, 12, 36, 0.3);
+  --accent: #a30f2d;          /* titles, result, timer digits */
+  --text: #3a1018;
+  --yes: #c8102e;
+  --yes-shadow: rgba(200, 16, 46, 0.45);
+  --no-bg: #f3e1dc;
+  --no-text: #6b2a33;
+  --focus: #d9a441;
+  --face: #fff6f1;
+  --face-edge: #c99678;
+}
+:root[data-theme="sunset"] {
+  --bg-glow1: rgba(255, 244, 214, 0.8); --bg-glow2: rgba(255, 94, 98, 0.5);
+  --bg-a: #ff9966; --bg-b: #ff7e7e; --bg-c: #ffcc80;
+  --card: rgba(255, 248, 238, 0.96); --card-edge: rgba(214, 140, 80, 0.5);
+  --shadow: rgba(150, 50, 10, 0.3);
+  --accent: #c2410c; --text: #431407;
+  --yes: #e8590c; --yes-shadow: rgba(232, 89, 12, 0.45);
+  --no-bg: #fde6cf; --no-text: #7c2d12;
+  --face: #fff8ee; --face-edge: #d68c50;
+}
+:root[data-theme="lavender"] {
+  --bg-glow1: rgba(245, 235, 255, 0.8); --bg-glow2: rgba(167, 139, 250, 0.55);
+  --bg-a: #b79cf5; --bg-b: #d0bcfa; --bg-c: #efe5ff;
+  --card: rgba(252, 249, 255, 0.96); --card-edge: rgba(150, 120, 210, 0.45);
+  --shadow: rgba(70, 30, 140, 0.3);
+  --accent: #6d28d9; --text: #2e1065;
+  --yes: #7c3aed; --yes-shadow: rgba(124, 58, 237, 0.45);
+  --no-bg: #ece3fb; --no-text: #4c1d95;
+  --face: #fcf9ff; --face-edge: #9678d2;
+}
+:root[data-theme="sakura"] {
+  --bg-glow1: rgba(255, 255, 255, 0.85); --bg-glow2: rgba(249, 168, 212, 0.6);
+  --bg-a: #ffc1dd; --bg-b: #ffdbea; --bg-c: #fff0f6;
+  --card: rgba(255, 252, 253, 0.96); --card-edge: rgba(230, 150, 185, 0.5);
+  --shadow: rgba(190, 60, 120, 0.25);
+  --accent: #be185d; --text: #500724;
+  --yes: #ec4899; --yes-shadow: rgba(236, 72, 153, 0.45);
+  --no-bg: #fce7f1; --no-text: #831843;
+  --face: #fffcfd; --face-edge: #e696b9;
+}
+:root[data-theme="ocean"] {
+  --bg-glow1: rgba(224, 247, 255, 0.8); --bg-glow2: rgba(56, 189, 248, 0.5);
+  --bg-a: #6ec6f5; --bg-b: #9ddcff; --bg-c: #d6f1ff;
+  --card: rgba(246, 252, 255, 0.96); --card-edge: rgba(100, 160, 200, 0.5);
+  --shadow: rgba(10, 70, 130, 0.3);
+  --accent: #0369a1; --text: #082f49;
+  --yes: #0284c7; --yes-shadow: rgba(2, 132, 199, 0.45);
+  --no-bg: #dbeefa; --no-text: #0c4a6e;
+  --face: #f6fcff; --face-edge: #64a0c8;
+}
+:root[data-theme="mint"] {
+  --bg-glow1: rgba(235, 255, 245, 0.8); --bg-glow2: rgba(52, 211, 153, 0.5);
+  --bg-a: #6fdcb0; --bg-b: #a3ecce; --bg-c: #d8f8ea;
+  --card: rgba(247, 255, 251, 0.96); --card-edge: rgba(100, 180, 145, 0.5);
+  --shadow: rgba(10, 100, 70, 0.28);
+  --accent: #047857; --text: #022c22;
+  --yes: #059669; --yes-shadow: rgba(5, 150, 105, 0.45);
+  --no-bg: #dcf5ea; --no-text: #065f46;
+  --face: #f7fffb; --face-edge: #64b491;
+}
+:root[data-theme="midnight"] {
+  --bg-glow1: rgba(90, 80, 160, 0.55); --bg-glow2: rgba(217, 164, 65, 0.3);
+  --bg-a: #1b1340; --bg-b: #2d1f5e; --bg-c: #4a2f78;
+  --card: rgba(36, 26, 72, 0.95); --card-edge: rgba(217, 164, 65, 0.6);
+  --shadow: rgba(0, 0, 0, 0.55);
+  --accent: #f5c969; --text: #f4ecff;
+  --yes: #d9a441; --yes-shadow: rgba(217, 164, 65, 0.5);
+  --no-bg: #3b2d6e; --no-text: #e6d9ff;
+  --focus: #f5c969;
+  --face: #2a1f55; --face-edge: #d9a441;
+}
+:root[data-theme="noir"] {
+  --bg-glow1: rgba(255, 60, 80, 0.25); --bg-glow2: rgba(200, 16, 46, 0.35);
+  --bg-a: #0d0d10; --bg-b: #1c1015; --bg-c: #34121b;
+  --card: rgba(24, 18, 22, 0.95); --card-edge: rgba(200, 16, 46, 0.6);
+  --shadow: rgba(200, 16, 46, 0.35);
+  --accent: #ff4d6a; --text: #fbe9ec;
+  --yes: #e11d48; --yes-shadow: rgba(225, 29, 72, 0.55);
+  --no-bg: #2b2127; --no-text: #f1cdd4;
+  --focus: #ff8aa0;
+  --face: #1c1418; --face-edge: #e11d48;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #fbc2eb 100%);
+  background:
+    radial-gradient(circle at 15% 10%, var(--bg-glow1), transparent 45%),
+    radial-gradient(circle at 88% 90%, var(--bg-glow2), transparent 50%),
+    linear-gradient(135deg, var(--bg-a) 0%, var(--bg-b) 50%, var(--bg-c) 100%);
   font-family: 'Segoe UI', system-ui, sans-serif;
   overflow: hidden;
   position: relative;
+  transition: background 0.4s ease;
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--card);
+  border: 1px solid var(--card-edge);
   border-radius: 24px;
   padding: 40px 30px;
   text-align: center;
   max-width: 420px;
   width: 90%;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 50px var(--shadow);
   position: relative;
   z-index: 2;
 }
 
+/* ❤️ Heartbeat after YES (lub-dub, forever) */
+.card.beating {
+  animation: heartbeat 1.2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes heartbeat {
+  0%   { transform: scale(1);    box-shadow: 0 20px 50px var(--shadow); }
+  14%  { transform: scale(1.08); box-shadow: 0 20px 70px var(--yes-shadow); }
+  28%  { transform: scale(1);    box-shadow: 0 20px 50px var(--shadow); }
+  42%  { transform: scale(1.12); box-shadow: 0 24px 90px var(--yes-shadow); }
+  70%  { transform: scale(1);    box-shadow: 0 20px 50px var(--shadow); }
+  100% { transform: scale(1);    box-shadow: 0 20px 50px var(--shadow); }
+}
+
 h1 {
   font-size: 1.6rem;
-  color: #d6336c;
+  color: var(--accent);
   margin-bottom: 10px;
 }
 
 #question {
   font-size: 1.3rem;
-  color: #333;
+  color: var(--text);
   margin: 20px 0 30px;
   min-height: 60px;
 }
 
-/* Yes and No sit side by side */
 .buttons {
   display: flex;
   justify-content: center;
@@ -57,24 +167,23 @@ button {
 }
 
 button:focus-visible {
-  outline: 3px solid #d6336c;
+  outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
 
 #yesBtn {
-  background: #d6336c;
-  color: white;
-  box-shadow: 0 8px 20px rgba(214, 51, 108, 0.4);
+  background: var(--yes);
+  color: #fff;
+  box-shadow: 0 8px 20px var(--yes-shadow);
 }
-
 #yesBtn:hover { transform: scale(1.08); }
 
 #noBtn {
-  background: #eee;
-  color: #555;
+  background: var(--no-bg);
+  color: var(--no-text);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
-/* Once it runs away, No jumps around the whole screen */
 #noBtn.moved {
   position: fixed;
   z-index: 5;
@@ -84,7 +193,7 @@ button:focus-visible {
 #result {
   display: none;
   font-size: 1.4rem;
-  color: #d6336c;
+  color: var(--accent);
   font-weight: bold;
   margin-top: 20px;
   animation: pop 0.4s ease;
@@ -104,20 +213,98 @@ button:focus-visible {
   overflow: hidden;
   z-index: 1;
 }
-
 .hearts span {
   position: absolute;
   top: 100%;
   font-size: 1.5rem;
   animation: float 4s ease-in forwards;
-  opacity: 0.8;
+  opacity: 0.85;
 }
-
 @keyframes float {
   to { top: -10%; transform: translateX(20px) rotate(20deg); opacity: 0; }
 }
 
+/* Theme picker (top left) */
+.swatches {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 6;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 130px;
+}
+.swatches button {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+.swatches button:hover { transform: scale(1.2); }
+.swatches button.active { outline: 3px solid var(--focus); outline-offset: 2px; }
+
 @media (prefers-reduced-motion: reduce) {
   #noBtn.moved { transition: none; }
   .hearts span { animation-duration: 0.01s; }
+  .card.beating { animation-duration: 2.4s; }   /* slower, gentler beat */
+}
+
+/* Clock timer, top right corner */
+.timer {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 6;
+  width: 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.timer svg {
+  width: 96px;
+  height: 96px;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+}
+.timer .face  { fill: var(--face); stroke: var(--face-edge); stroke-width: 3; }
+.timer .ticks line { stroke: var(--no-text); stroke-width: 1.4; stroke-linecap: round; }
+.timer .track { fill: none; stroke: var(--no-bg); stroke-width: 5; }
+.timer .ring  {
+  fill: none;
+  stroke: var(--yes);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.25s linear;
+}
+.timer .hand  {
+  stroke: var(--text);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transition: transform 0.25s linear;
+}
+.timer .pin   { fill: var(--accent); }
+
+.timer .digits {
+  padding: 2px 12px;
+  border-radius: 50px;
+  background: var(--card);
+  color: var(--accent);
+  font-size: 1rem;
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer.low { animation: tick 1s ease-in-out infinite; }
+.timer.low .hand { stroke: var(--yes); }
+.timer.low .digits { background: var(--yes); color: #fff; }
+
+@keyframes tick {
+  50% { transform: scale(1.1); }
 }

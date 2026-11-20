@@ -1,10 +1,37 @@
 const card     = document.getElementById("card");
 const title    = document.getElementById("title");
+const timerEl = document.getElementById("timer");
 const question = document.getElementById("question");
 const buttons  = document.getElementById("buttons");
 const result   = document.getElementById("result");
 const yesBtn   = document.getElementById("yesBtn");
 const noBtn    = document.getElementById("noBtn");
+const ringEl   = document.getElementById("ring");
+const handEl   = document.getElementById("hand");
+const digitsEl = document.getElementById("digits");
+
+
+/* Draw the 12 tick marks around the clock face. */
+const ticksEl = document.getElementById("ticks");
+for (let i = 0; i < 12; i++) {
+  const t = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  t.setAttribute("x1", 50);
+  t.setAttribute("x2", 50);
+  t.setAttribute("y1", i % 3 === 0 ? 6 : 7.5);   // longer marks at 12, 3, 6 and 9
+  t.setAttribute("y2", 9.5);
+  t.setAttribute("transform", "rotate(" + i * 30 + " 50 50)");
+  ticksEl.appendChild(t);
+}
+
+/* Color themes: pick one at random on load, tap a dot to switch. */
+/* Color themes: start on rose, then switch to the next one on every No. */
+const themes = ["rose", "sunset", "sakura", "lavender", "ocean", "mint", "midnight", "noir"];
+let themeIndex = 0;
+
+function nextTheme() {
+  themeIndex = (themeIndex + 1) % themes.length;
+  document.documentElement.dataset.theme = themes[themeIndex];
+}
 
 /* What shows up in place of the question each time No is clicked. */
 const excuses = [
@@ -13,11 +40,13 @@ const excuses = [
   "Kekekekekek bawal ngani 😂",
   "Ay mapilit 🙄",
   "Nice try 😏",
-  "That button is broken 🔧",
+  "That button will broke me 🔧",
   "The 'No' button has left the chat 🚪",
   "You can't catch me!",
+  "Pag ayaw huawg habulin",
   "Access denied ❌",
-  "This is a trap, click Yes instead 💘"
+  "This is a trap, click Yes instead 💘",
+  "Yes na para hindi ka na macringe"
 ];
 
 let dodgeCount = 0;
@@ -58,7 +87,7 @@ function pickSpot() {
 
 function dodge() {
   const now = Date.now();
-  if (now - lastDodge < 200) return;   // hover + click together count once
+  if (now - lastDodge < 200) return;
   lastDodge = now;
   dodgeCount++;
 
@@ -68,7 +97,7 @@ function dodge() {
     noBtn.style.left = r.left + "px";
     noBtn.style.top  = r.top + "px";
     noBtn.classList.add("moved");
-    noBtn.getBoundingClientRect();     // force reflow so the move animates
+    noBtn.getBoundingClientRect();    
   }
 
   /* Yes grows a little each time (capped so it stays on the card). */
@@ -81,6 +110,10 @@ function dodge() {
   noBtn.style.top  = spot.y + "px";
 
   question.textContent = nextExcuse();
+    let i;
+        do { i = Math.floor(Math.random() * themes.length); } while (i === themeIndex);
+        themeIndex = i;
+    document.documentElement.dataset.theme = themes[i];
 }
 
 /* Mouse hover, touch and keyboard/click all make No run away. */
@@ -97,22 +130,32 @@ window.addEventListener("resize", () => {
   noBtn.style.top  = Math.min(parseFloat(noBtn.style.top),  maxY) + "px";
 });
 
-function sayYes() {
+let answered = false;
+
+function sayYes(auto) {
+  if (answered) return;            // only answer once
+  answered = true;
+  clearInterval(timerId);
+  timerEl.style.display = "none"; 
+
   buttons.style.display = "none";
   noBtn.style.display = "none";
   question.style.display = "none";
-  title.textContent = "YAY! 🎉";
+  title.textContent = auto ? "Time's up! ⏰" : "YAY! 🎉";
   result.style.display = "block";
-  result.textContent = "She said YES! I knew it 💕 I'll pick the time and place, get ready!";
+  result.textContent = auto
+    ? "No answer means YES! I knew it 💕 I'll pick the time and place, get ready!"
+    : "She said YES! I knew it 💕 I'll pick the time and place, get ready!";
   launchHearts();
 }
+
 
 function launchHearts() {
   const box = document.createElement("div");
   box.className = "hearts";
   document.body.appendChild(box);
 
-  const emojis = ["❤️", "💖", "💕", "😍", "💘"];
+  const emojis = ["🐶", "🐱", "🐰", "🐻", "🐼", "🦊", "🐸", "🐵", "🦁", "🐯", "🐨", "🐷", "🐧", "🦄", "🐥", "🦋", "🐢", "🐙", "🦒", "🐘"];
   for (let i = 0; i < 40; i++) {
     const span = document.createElement("span");
     span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
@@ -123,4 +166,25 @@ function launchHearts() {
   }
 }
 
-yesBtn.addEventListener("click", sayYes);
+/* 1 minute countdown. At 0:00 the answer is Yes. */
+const TIME_LIMIT = 30;                          // seconds
+const endAt = Date.now() + TIME_LIMIT * 1000;
+let timerId = null;
+
+function renderTimer() {
+  const leftMs = Math.max(0, endAt - Date.now());
+  const left = Math.ceil(leftMs / 1000);
+  const f = leftMs / (TIME_LIMIT * 1000);          // 1 = full time, 0 = none left
+
+  digitsEl.textContent = Math.floor(left / 60) + ":" + String(left % 60).padStart(2, "0");
+  ringEl.style.strokeDashoffset = 100 * (1 - f);   // ring shrinks as time passes
+  handEl.style.transform = "rotate(" + 360 * (1 - f) + "deg)";   // hand sweeps once around
+  timerEl.classList.toggle("low", left <= 10);
+
+  if (left === 0) sayYes(true);
+}
+
+timerId = setInterval(renderTimer, 100);
+renderTimer();
+
+yesBtn.addEventListener("click", () => sayYes(false));

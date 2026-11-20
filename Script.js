@@ -23,6 +23,23 @@ for (let i = 0; i < 12; i++) {
   ticksEl.appendChild(t);
 }
 
+/* Image shown after YES. Swap the link for your own photo anytime. */
+const PHOTO_URL = "https://images.news9live.com/wp-content/uploads/2024/08/Rafflesia-Arnoldii-1024x768.jpg?w=1280";
+const photoImg = new Image();
+photoImg.alt = "A flower for you";
+photoImg.src = PHOTO_URL;
+
+function showPhoto() {
+  if (!photoImg.complete || !photoImg.naturalWidth) return;   // failed to load: show nothing
+  const holder = document.createElement("div");
+  holder.className = "photo";
+  holder.appendChild(photoImg);
+  card.appendChild(holder);
+
+  title.textContent = "A flower for you 💕";                  // NEW: replaces "YAY! 🎉" / "Time's up! ⏰"
+  result.textContent = "Happy to be with you 💕";
+}
+
 /* Color themes: pick one at random on load, tap a dot to switch. */
 /* Color themes: start on rose, then switch to the next one on every No. */
 const themes = ["rose", "sunset", "sakura", "lavender", "ocean", "mint", "midnight", "noir"];
@@ -147,6 +164,7 @@ function sayYes(auto) {
     ? "No answer means YES! I knew it 💕 I'll pick the time and place, get ready!"
     : "She said YES! I knew it 💕 I'll pick the time and place, get ready!";
   launchHearts();
+  setTimeout(showPhoto, 5500);          // NEW: image pops up after the animals
 }
 
 

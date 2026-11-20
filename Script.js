@@ -161,8 +161,8 @@ function sayYes(auto) {
   title.textContent = auto ? "Time's up! ⏰" : "YAY! 🎉";
   result.style.display = "block";
   result.textContent = auto
-    ? "No answer means YES! I knew it 💕 I'll pick the time and place, get ready!"
-    : "She said YES! I knew it 💕 I'll pick the time and place, get ready!";
+    ? "No answer means YES! I knew it 💕 I'll pick the time and place, get ready! first of..."
+    : "You said YES! I knew it 💕 I'll pick the time and place, get ready! first of...";
   launchHearts();
   setTimeout(showPhoto, 5500);          // NEW: image pops up after the animals
 }

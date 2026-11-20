@@ -31,15 +31,56 @@ photoImg.src = PHOTO_URL;
 
 function showPhoto() {
   if (!photoImg.complete || !photoImg.naturalWidth) return;   // failed to load: show nothing
-  const holder = document.createElement("div");
-  holder.className = "photo";
-  holder.appendChild(photoImg);
-  card.appendChild(holder);
 
-  title.textContent = "A flower for you 💕";                  // NEW: replaces "YAY! 🎉" / "Time's up! ⏰"
+  const bouquet = document.createElement("div");
+  bouquet.className = "bouquet";
+
+  const sway = document.createElement("div");
+  sway.className = "sway";
+
+  const bloom = document.createElement("div");
+  bloom.className = "bloom";
+  bloom.appendChild(photoImg);
+
+    sway.innerHTML =
+    '<span class="leaf l"></span><span class="leaf r"></span>' +
+    '<span class="leaf l2"></span><span class="leaf r2"></span>' +
+    '<div class="tail"></div><div class="wrap-back"></div>';
+  sway.appendChild(bloom);
+  sway.insertAdjacentHTML("beforeend",
+    '<div class="wrap"></div><div class="rim"></div><div class="bow"><i></i></div>');
+
+  bouquet.appendChild(sway);
+  card.appendChild(bouquet);
+
+  title.textContent = "A flower for you 💕";
   result.textContent = "Happy to be with you 💕";
-}
 
+  /* Shake from time to time; each shake knocks a few flowers loose. */
+  function shake() {
+    sway.classList.add("shaking");
+    setTimeout(() => sway.classList.remove("shaking"), 900);
+
+    const count = 3 + Math.floor(Math.random() * 3);          // 3 to 5 pieces
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement("div");
+      const size = 30 + Math.random() * 22;
+      p.className = "petal";
+      p.style.width = p.style.height = size + "px";
+      p.style.left = 15 + Math.random() * 60 + "%";
+      p.style.top = 10 + Math.random() * 40 + "%";
+      p.style.backgroundImage = "url('" + PHOTO_URL + "')";
+      p.style.setProperty("--dx", (Math.random() * 120 - 60) + "px");
+      p.style.setProperty("--rot", (Math.random() * 360 - 180) + "deg");
+      p.style.animationDelay = Math.random() * 0.4 + "s";
+      p.addEventListener("animationend", () => p.remove());
+      bouquet.appendChild(p);
+    }
+  }
+
+  setTimeout(shake, 1500);
+  setInterval(shake, 5000);                                    // shake every 5 seconds
+}
 /* Color themes: pick one at random on load, tap a dot to switch. */
 /* Color themes: start on rose, then switch to the next one on every No. */
 const themes = ["rose", "sunset", "sakura", "lavender", "ocean", "mint", "midnight", "noir"];

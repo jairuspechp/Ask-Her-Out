@@ -4,178 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A Very Important Question</title>
-<style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #fbc2eb 100%);
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    overflow: hidden;
-    position: relative;
-  }
-  .card {
-    background: rgba(255,255,255,0.9);
-    border-radius: 24px;
-    padding: 40px 30px;
-    text-align: center;
-    max-width: 420px;
-    width: 90%;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-    position: relative;
-    z-index: 2;
-    transition: transform 0.3s ease;
-  }
-  h1 {
-    font-size: 1.6rem;
-    color: #d6336c;
-    margin-bottom: 10px;
-  }
-  #question {
-    font-size: 1.3rem;
-    color: #333;
-    margin: 20px 0 30px;
-    min-height: 60px;
-  }
-  .buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    position: relative;
-    height: 70px;
-  }
-  button {
-    padding: 14px 28px;
-    font-size: 1.1rem;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  #yesBtn {
-    background: #d6336c;
-    color: white;
-    box-shadow: 0 8px 20px rgba(214,51,108,0.4);
-  }
-  #yesBtn:hover {
-    transform: scale(1.08);
-  }
-  #noBtn {
-    background: #eee;
-    color: #555;
-    position: absolute;
-  }
-  #result {
-    display: none;
-    font-size: 1.4rem;
-    color: #d6336c;
-    font-weight: bold;
-    margin-top: 20px;
-    animation: pop 0.4s ease;
-  }
-  @keyframes pop {
-    0% { transform: scale(0); }
-    80% { transform: scale(1.15); }
-    100% { transform: scale(1); }
-  }
-  .hearts span {
-    position: absolute;
-    top: 100%;
-    font-size: 1.5rem;
-    animation: float 4s ease-in forwards;
-    opacity: 0.8;
-  }
-  @keyframes float {
-    to { top: -10%; transform: translateX(20px) rotate(20deg); opacity: 0; }
-  }
-  .yes-size {
-    transition: font-size 0.2s ease;
-  }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="card" id="card">
-  <h1>🚨 Emergency Survey 🚨</h1>
+  <h1 id="title">🚨 Emergency Survey 🚨</h1>
   <div id="question">Will you go on a date with me? 👀</div>
-  <div class="buttons">
-    <button id="yesBtn" onclick="sayYes()">Yes 😍</button>
-    <button id="noBtn" onmouseover="dodge()" onclick="dodge()">No</button>
+
+  <div class="buttons" id="buttons">
+    <button id="yesBtn" type="button">Yes 😍</button>
+    <button id="noBtn" type="button">No</button>
   </div>
+
   <div id="result"></div>
 </div>
 
-<script>
-  const noBtn = document.getElementById('noBtn');
-  const yesBtn = document.getElementById('yesBtn');
-  const card = document.getElementById('card');
-  const question = document.getElementById('question');
-  const result = document.getElementById('result');
-  let dodgeCount = 0;
-
-  const excuses = [
-    "Nice try 😏",
-    "That button is broken 🔧",
-    "Nope, not this time 🙅‍♀️",
-    "The 'No' button has left the chat 🚪",
-    "You can't catch me!",
-    "Try again 😂",
-    "Access denied ❌",
-    "This is a trap, click Yes instead 💘"
-  ];
-
-  function dodge() {
-    dodgeCount++;
-    const cardRect = card.getBoundingClientRect();
-    const btnRect = noBtn.getBoundingClientRect();
-    const maxX = cardRect.width - btnRect.width - 20;
-    const maxY = cardRect.height - btnRect.height - 20;
-    const newX = Math.random() * maxX;
-    const newY = Math.random() * maxY;
-    noBtn.style.left = newX + "px";
-    noBtn.style.top = newY + "px";
-
-    question.textContent = excuses[dodgeCount % excuses.length];
-
-    // grow yes button a little each time
-    const currentSize = parseFloat(getComputedStyle(yesBtn).fontSize);
-    yesBtn.style.fontSize = Math.min(currentSize + 2, 40) + "px";
-    yesBtn.style.padding = (14 + dodgeCount) + "px " + (28 + dodgeCount * 2) + "px";
-  }
-
-  function sayYes() {
-    card.querySelector('.buttons').style.display = 'none';
-    question.style.display = 'none';
-    document.querySelector('h1').textContent = "YAY! 🎉";
-    result.style.display = 'block';
-    result.textContent = "She said YES! I knew it 💕 I'll pick the time and place, get ready!";
-    launchHearts();
-  }
-
-  function launchHearts() {
-    const heartsContainer = document.createElement('div');
-    heartsContainer.className = 'hearts';
-    heartsContainer.style.position = 'fixed';
-    heartsContainer.style.inset = '0';
-    heartsContainer.style.pointerEvents = 'none';
-    heartsContainer.style.overflow = 'hidden';
-    document.body.appendChild(heartsContainer);
-
-    const emojis = ['❤️','💖','💕','😍','💘'];
-    for (let i = 0; i < 40; i++) {
-      const span = document.createElement('span');
-      span.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-      span.style.left = Math.random() * 100 + "%";
-      span.style.animationDelay = Math.random() * 2 + "s";
-      span.style.fontSize = (1 + Math.random()*1.5) + "rem";
-      heartsContainer.appendChild(span);
-    }
-  }
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>

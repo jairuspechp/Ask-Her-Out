@@ -1,0 +1,123 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #fbc2eb 100%);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 24px;
+  padding: 40px 30px;
+  text-align: center;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+h1 {
+  font-size: 1.6rem;
+  color: #d6336c;
+  margin-bottom: 10px;
+}
+
+#question {
+  font-size: 1.3rem;
+  color: #333;
+  margin: 20px 0 30px;
+  min-height: 60px;
+}
+
+/* Yes and No sit side by side */
+.buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  min-height: 70px;
+}
+
+button {
+  padding: 14px 28px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:focus-visible {
+  outline: 3px solid #d6336c;
+  outline-offset: 3px;
+}
+
+#yesBtn {
+  background: #d6336c;
+  color: white;
+  box-shadow: 0 8px 20px rgba(214, 51, 108, 0.4);
+}
+
+#yesBtn:hover { transform: scale(1.08); }
+
+#noBtn {
+  background: #eee;
+  color: #555;
+}
+
+/* Once it runs away, No jumps around the whole screen */
+#noBtn.moved {
+  position: fixed;
+  z-index: 5;
+  transition: left 0.28s ease, top 0.28s ease;
+}
+
+#result {
+  display: none;
+  font-size: 1.4rem;
+  color: #d6336c;
+  font-weight: bold;
+  margin-top: 20px;
+  animation: pop 0.4s ease;
+}
+
+@keyframes pop {
+  0%   { transform: scale(0); }
+  80%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+/* Floating hearts */
+.hearts {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.hearts span {
+  position: absolute;
+  top: 100%;
+  font-size: 1.5rem;
+  animation: float 4s ease-in forwards;
+  opacity: 0.8;
+}
+
+@keyframes float {
+  to { top: -10%; transform: translateX(20px) rotate(20deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #noBtn.moved { transition: none; }
+  .hearts span { animation-duration: 0.01s; }
+}

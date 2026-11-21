@@ -25,14 +25,14 @@ for (let i = 0; i < 12; i++) {
 
 /* One photo per color theme. Swap any link for your own file. */
 const PHOTOS = {
-  rose:     "Img/Rafflesia-255_1500x.jpg",
-  sunset:   "Img/Sunflower.jpg",     // orange: marigold or orange tulip
-  sakura:   "Img/Rose plant.jpg",     // pink: cherry blossom
-  lavender: "Img/Rafflesia 2.webp",   // purple: lavender or orchid
-  ocean:    "Img/Rafflesia 2.webp",   // blue: hydrangea or forget-me-not
-  mint:     "Img/Rafflesia 2.webp",   // green/white: white rose or green hydrangea
-  midnight: "Img/Rafflesia 2.webp",   // gold: sunflower
-  noir:     "Img/Rafflesia 2.webp"    // dark red or black rose
+  rose:     "Img/Rafflesia-255_1500x.jpg",   //Flower, 
+  sunset:   "Img/Sunflower.jpg",             //Flower, Had BG
+  sakura:   "Img/cherry_blossom_Bouquet.jpg",     //Flower, Had BG
+  lavender: "Img/lavendersBoquet.jpg",              //Flower, Had BG
+  ocean:    "Img/seagrassStyle.jpg",   // grass , Had BG
+  mint:     "Img/PeppermintStyle.jpg",   // grass, Had BG
+  midnight: "Img/MidnightPrimroseBouquet.jpg",   //  Flower, Had BG
+  noir:     "Img/MakahiyaBouquet.webp"    // Flower, Had BG
 };
 
 /* Preload them all so the popup is instant. */
@@ -75,6 +75,7 @@ function showPhoto() {
 
   document.documentElement.dataset.theme = id;       // background matches the first flower
   themeIndex = themes.indexOf(id);
+  document.body.classList.add("show-bg");
 
   const bouquet = document.createElement("div");
   bouquet.className = "bouquet";
@@ -114,20 +115,25 @@ function showPhoto() {
 
     bloom.replaceChildren(photoCache[currentId]);
     PHOTO_URL = PHOTOS[currentId];
+    document.body.classList.add("bg-reset");
+    document.body.classList.remove("show-bg");
     document.documentElement.dataset.theme = currentId;
     themeIndex = themes.indexOf(currentId);
+    void document.body.offsetWidth;                
+    document.body.classList.remove("bg-reset");
+    document.body.classList.add("show-bg");        
 
-    bouquet.style.animation = "none";              // bouquet re-pops with the photo
+    bouquet.style.animation = "none";              
     void bouquet.offsetWidth;
     bouquet.style.animation = "";
     playWave();
   });
 
-  /* Drop some small flowers. Used by the timed shake and by clicking the photo. */
+  
   function dropPetals(count) {
     for (let i = 0; i < count; i++) {
       const p = document.createElement("div");
-      const size = 14 + Math.random() * 10;
+      const size = 20 + Math.random() * 10;
       p.className = "petal";
       p.style.width = p.style.height = size + "px";
       p.style.left = 15 + Math.random() * 60 + "%";

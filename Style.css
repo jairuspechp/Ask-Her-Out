@@ -294,7 +294,13 @@ button:focus-visible {
   height: 300px;
   max-width: 100%;
   margin: 24px auto 0;
-  animation: pop 0.6s ease;
+  animation: pop 1.2s ease;
+}
+
+@keyframes pop {
+  0%   { transform: scale(0); }
+  80%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
 }
 
 /* shakes from the bottom tip */
@@ -395,3 +401,35 @@ button:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .wave-char { animation: none; }
 }
+
+/* ---------- Background image per color theme ---------- */
+:root                        { --ghost: url("Img/bg/RafllesiaBG.webp"); }
+:root[data-theme="sunset"]   { --ghost: url("Img/bg/SunflowerBG.jfif"); }
+:root[data-theme="sakura"]   { --ghost: url("Img/bg/CherryblossomBg.webp"); }
+:root[data-theme="lavender"] { --ghost: url("Img/bg/LavenderBG.jpg"); }
+:root[data-theme="ocean"]    { --ghost: url("Img/bg/SeagrassBG.jpeg"); }
+:root[data-theme="mint"]     { --ghost: url("Img/bg/PeppermintBG.jfif"); }
+:root[data-theme="midnight"] { --ghost: url("Img/bg/MidnightprimroseBG.webp"); }
+:root[data-theme="noir"]     { --ghost: url("Img/bg/MakahiyaBG.jpg"); }
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;                    /* above the theme color, below the card and hearts */
+  background-image: var(--ghost);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;                    /* hidden while she is still answering */
+  transition: opacity 2s ease;                /* lower = fainter ghost, higher = clearer picture */
+  filter: grayscale(0.3) blur(1.5px);
+  mix-blend-mode: soft-light;    /* lets the theme color show through */
+  pointer-events: none;
+}
+
+body.show-bg::before {
+  opacity: 0.40;               /* the ghost strength once she says Yes */
+}
+
+body.bg-reset::before { transition: none; }   /* lets the background snap to hidden instantly */

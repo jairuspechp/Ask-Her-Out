@@ -23,14 +23,58 @@ for (let i = 0; i < 12; i++) {
   ticksEl.appendChild(t);
 }
 
-/* Image shown after YES. Swap the link for your own photo anytime. */
-const PHOTO_URL = "https://images.news9live.com/wp-content/uploads/2024/08/Rafflesia-Arnoldii-1024x768.jpg?w=1280";
-const photoImg = new Image();
-photoImg.alt = "A flower for you";
-photoImg.src = PHOTO_URL;
+/* One photo per color theme. Swap any link for your own file. */
+const PHOTOS = {
+  rose:     "Img/Rafflesia-255_1500x.jpg",
+  sunset:   "Img/Sunflower.jpg",     // orange: marigold or orange tulip
+  sakura:   "Img/Rose plant.jpg",     // pink: cherry blossom
+  lavender: "Img/Rafflesia 2.webp",   // purple: lavender or orchid
+  ocean:    "Img/Rafflesia 2.webp",   // blue: hydrangea or forget-me-not
+  mint:     "Img/Rafflesia 2.webp",   // green/white: white rose or green hydrangea
+  midnight: "Img/Rafflesia 2.webp",   // gold: sunflower
+  noir:     "Img/Rafflesia 2.webp"    // dark red or black rose
+};
+
+/* Preload them all so the popup is instant. */
+const photoCache = {};
+Object.keys(PHOTOS).forEach(id => {
+  const im = new Image();
+  im.alt = "A flower for you";
+  im.src = PHOTOS[id];
+  photoCache[id] = im;
+});
+
+/* Wave effect: splits text into letters that bounce one after another. */
+function waveText(el, text) {
+  el.setAttribute("aria-label", text);
+  el.textContent = "";
+  let n = 0;
+  text.split(" ").forEach((word, w, words) => {
+    const wordEl = document.createElement("span");
+    wordEl.className = "wave-word";              // keeps each word together on one line
+    [...word].forEach(ch => {
+      const s = document.createElement("span");
+      s.className = "wave-char";
+      s.textContent = ch;
+      s.setAttribute("aria-hidden", "true");
+      s.style.animationDelay = (n++ * 0.05) + "s";
+      wordEl.appendChild(s);
+    });
+    el.appendChild(wordEl);
+    if (w < words.length - 1) { el.appendChild(document.createTextNode(" ")); n++; }
+  });
+}
 
 function showPhoto() {
-  if (!photoImg.complete || !photoImg.naturalWidth) return;   // failed to load: show nothing
+  let id = themes[themeIndex];                       // the color she ended on
+  const ready = im => im && im.complete && im.naturalWidth;
+  if (!ready(photoCache[id])) id = "rose";           // fall back to the original photo
+  const photoImg = photoCache[id];
+  let PHOTO_URL = PHOTOS[id];                        // falling petals use this too
+  if (!ready(photoImg)) return;                      // nothing loaded: show nothing
+
+  document.documentElement.dataset.theme = id;       // background matches the first flower
+  themeIndex = themes.indexOf(id);
 
   const bouquet = document.createElement("div");
   bouquet.className = "bouquet";
@@ -42,29 +86,48 @@ function showPhoto() {
   bloom.className = "bloom";
   bloom.appendChild(photoImg);
 
-    sway.innerHTML =
-    '<span class="leaf l"></span><span class="leaf r"></span>' +
-    '<span class="leaf l2"></span><span class="leaf r2"></span>' +
-    '<div class="tail"></div><div class="wrap-back"></div>';
-  sway.appendChild(bloom);
-  sway.insertAdjacentHTML("beforeend",
-    '<div class="wrap"></div><div class="rim"></div><div class="bow"><i></i></div>');
+  sway.innerHTML = buildBouquetSVG();   // the SVG goes in first (behind)
+  sway.appendChild(bloom);              // the photo goes on top
 
   bouquet.appendChild(sway);
   card.appendChild(bouquet);
 
-  title.textContent = "A flower for you 💕";
-  result.textContent = "Happy to be with you 💕";
+  const TITLE_TEXT  = "A flower for you 💕";
+  const RESULT_TEXT = "Happy to be with you 💕";
+  const playWave = () => {
+    waveText(title, TITLE_TEXT);
+    waveText(result, RESULT_TEXT);
+  };
+  playWave();
 
-  /* Shake from time to time; each shake knocks a few flowers loose. */
-  function shake() {
-    sway.classList.add("shaking");
-    setTimeout(() => sway.classList.remove("shaking"), 900);
+  /* Button: show the next flower each click */
+  const nextBtn = document.createElement("button");
+  nextBtn.className = "flower-btn";
+  nextBtn.textContent = "Next flower 🌸";
+  card.appendChild(nextBtn);
 
-    const count = 3 + Math.floor(Math.random() * 3);          // 3 to 5 pieces
+  let currentId = id;
+  nextBtn.addEventListener("click", () => {
+    const readyIds = themes.filter(t => ready(photoCache[t]));
+    if (readyIds.length < 2) return;
+    currentId = readyIds[(readyIds.indexOf(currentId) + 1) % readyIds.length];
+
+    bloom.replaceChildren(photoCache[currentId]);
+    PHOTO_URL = PHOTOS[currentId];
+    document.documentElement.dataset.theme = currentId;
+    themeIndex = themes.indexOf(currentId);
+
+    bouquet.style.animation = "none";              // bouquet re-pops with the photo
+    void bouquet.offsetWidth;
+    bouquet.style.animation = "";
+    playWave();
+  });
+
+  /* Drop some small flowers. Used by the timed shake and by clicking the photo. */
+  function dropPetals(count) {
     for (let i = 0; i < count; i++) {
       const p = document.createElement("div");
-      const size = 30 + Math.random() * 22;
+      const size = 14 + Math.random() * 10;
       p.className = "petal";
       p.style.width = p.style.height = size + "px";
       p.style.left = 15 + Math.random() * 60 + "%";
@@ -78,11 +141,26 @@ function showPhoto() {
     }
   }
 
+  function shake() {
+    sway.classList.add("shaking");
+    setTimeout(() => sway.classList.remove("shaking"), 900);
+    dropPetals(3 + Math.floor(Math.random() * 3));       // 3 to 5 pieces
+  }
+
   setTimeout(shake, 1500);
-  setInterval(shake, 5000);                                    // shake every 5 seconds
+  setInterval(shake, 5000);
+
+  /* Click the photo: it shakes and drops flowers right away. */
+  bloom.addEventListener("click", () => {
+    sway.classList.remove("shaking");
+    void sway.offsetWidth;                                // restart the shake
+    sway.classList.add("shaking");
+    setTimeout(() => sway.classList.remove("shaking"), 900);
+    dropPetals(5 + Math.floor(Math.random() * 4));        // 5 to 8 pieces
+  });
 }
-/* Color themes: pick one at random on load, tap a dot to switch. */
-/* Color themes: start on rose, then switch to the next one on every No. */
+
+/* Color themes: start on rose, then switch to a random one on every No. */
 const themes = ["rose", "sunset", "sakura", "lavender", "ocean", "mint", "midnight", "noir"];
 let themeIndex = 0;
 
@@ -155,7 +233,7 @@ function dodge() {
     noBtn.style.left = r.left + "px";
     noBtn.style.top  = r.top + "px";
     noBtn.classList.add("moved");
-    noBtn.getBoundingClientRect();    
+    noBtn.getBoundingClientRect();
   }
 
   /* Yes grows a little each time (capped so it stays on the card). */
@@ -168,10 +246,11 @@ function dodge() {
   noBtn.style.top  = spot.y + "px";
 
   question.textContent = nextExcuse();
-    let i;
-        do { i = Math.floor(Math.random() * themes.length); } while (i === themeIndex);
-        themeIndex = i;
-    document.documentElement.dataset.theme = themes[i];
+
+  let i;
+  do { i = Math.floor(Math.random() * themes.length); } while (i === themeIndex);
+  themeIndex = i;
+  document.documentElement.dataset.theme = themes[i];
 }
 
 /* Mouse hover, touch and keyboard/click all make No run away. */
@@ -194,7 +273,7 @@ function sayYes(auto) {
   if (answered) return;            // only answer once
   answered = true;
   clearInterval(timerId);
-  timerEl.style.display = "none"; 
+  timerEl.style.display = "none";
 
   buttons.style.display = "none";
   noBtn.style.display = "none";
@@ -205,7 +284,7 @@ function sayYes(auto) {
     ? "No answer means YES! I knew it 💕 I'll pick the time and place, get ready! first of..."
     : "You said YES! I knew it 💕 I'll pick the time and place, get ready! first of...";
   launchHearts();
-  setTimeout(showPhoto, 5500);          // NEW: image pops up after the animals
+  setTimeout(showPhoto, 5500);          // image pops up after the animals
 }
 
 
@@ -225,7 +304,7 @@ function launchHearts() {
   }
 }
 
-/* 1 minute countdown. At 0:00 the answer is Yes. */
+/* Countdown. At 0:00 the answer is Yes. */
 const TIME_LIMIT = 30;                          // seconds
 const endAt = Date.now() + TIME_LIMIT * 1000;
 let timerId = null;

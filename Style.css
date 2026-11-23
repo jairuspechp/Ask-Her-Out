@@ -429,7 +429,7 @@ body::before {
 }
 
 body.show-bg::before {
-  opacity: 0.40;               /* the ghost strength once she says Yes */
+  opacity: 0.75;               /* the ghost strength once she says Yes */
 }
 
 body.bg-reset::before { transition: none; }   /* lets the background snap to hidden instantly */

@@ -66,15 +66,8 @@ function waveText(el, text) {
 }
 
 function showPhoto() {
-  let id = themes[themeIndex];                       // the color she ended on
-  const ready = im => im && im.complete && im.naturalWidth;
-  if (!ready(photoCache[id])) id = "rose";           // fall back to the original photo
-  const photoImg = photoCache[id];
-  let PHOTO_URL = PHOTOS[id];                        // falling petals use this too
-  if (!ready(photoImg)) return;                      // nothing loaded: show nothing
-
-  document.documentElement.dataset.theme = id;       // background matches the first flower
-  themeIndex = themes.indexOf(id);
+  let id = themes[themeIndex];
+  document.documentElement.dataset.theme = id;
   document.body.classList.add("show-bg");
 
   const bouquet = document.createElement("div");
@@ -82,13 +75,7 @@ function showPhoto() {
 
   const sway = document.createElement("div");
   sway.className = "sway";
-
-  const bloom = document.createElement("div");
-  bloom.className = "bloom";
-  bloom.appendChild(photoImg);
-
-  sway.innerHTML = buildBouquetSVG();   // the SVG goes in first (behind)
-  sway.appendChild(bloom);              // the photo goes on top
+  sway.innerHTML = buildBouquetSVG();
 
   bouquet.appendChild(sway);
   card.appendChild(bouquet);
@@ -101,68 +88,57 @@ function showPhoto() {
   };
   playWave();
 
-  /* Button: show the next flower each click */
+  /* flowers fall from the cursor as it moves */
+  enableCursorFlowers();
+
   const nextBtn = document.createElement("button");
   nextBtn.className = "flower-btn";
   nextBtn.textContent = "Next flower 🌸";
   card.appendChild(nextBtn);
 
-  let currentId = id;
   nextBtn.addEventListener("click", () => {
-    const readyIds = themes.filter(t => ready(photoCache[t]));
-    if (readyIds.length < 2) return;
-    currentId = readyIds[(readyIds.indexOf(currentId) + 1) % readyIds.length];
-
-    bloom.replaceChildren(photoCache[currentId]);
-    PHOTO_URL = PHOTOS[currentId];
+    themeIndex = (themeIndex + 1) % themes.length;
     document.body.classList.add("bg-reset");
     document.body.classList.remove("show-bg");
-    document.documentElement.dataset.theme = currentId;
-    themeIndex = themes.indexOf(currentId);
-    void document.body.offsetWidth;                
+    document.documentElement.dataset.theme = themes[themeIndex];
+    void document.body.offsetWidth;
     document.body.classList.remove("bg-reset");
-    document.body.classList.add("show-bg");        
+    document.body.classList.add("show-bg");
 
-    bouquet.style.animation = "none";              
+    bouquet.style.animation = "none";
     void bouquet.offsetWidth;
     bouquet.style.animation = "";
     playWave();
   });
 
-  
+  /* flowers from the bouquet itself drop with each shake */
   function dropPetals(count) {
+    const r = bouquet.getBoundingClientRect();
     for (let i = 0; i < count; i++) {
-      const p = document.createElement("div");
-      const size = 20 + Math.random() * 10;
-      p.className = "petal";
-      p.style.width = p.style.height = size + "px";
-      p.style.left = 15 + Math.random() * 60 + "%";
-      p.style.top = 10 + Math.random() * 40 + "%";
-      p.style.backgroundImage = "url('" + PHOTO_URL + "')";
-      p.style.setProperty("--dx", (Math.random() * 120 - 60) + "px");
-      p.style.setProperty("--rot", (Math.random() * 360 - 180) + "deg");
-      p.style.animationDelay = Math.random() * 0.4 + "s";
-      p.addEventListener("animationend", () => p.remove());
-      bouquet.appendChild(p);
+      setTimeout(() => {
+        spawnFlowerPetal(
+          r.left + r.width * (0.15 + Math.random() * 0.7),
+          r.top  + r.height * (0.05 + Math.random() * 0.35)
+        );
+      }, i * 90);
     }
   }
 
   function shake() {
     sway.classList.add("shaking");
     setTimeout(() => sway.classList.remove("shaking"), 900);
-    dropPetals(3 + Math.floor(Math.random() * 3));       // 3 to 5 pieces
+    dropPetals(3 + Math.floor(Math.random() * 3));
   }
 
   setTimeout(shake, 1500);
   setInterval(shake, 5000);
 
-  /* Click the photo: it shakes and drops flowers right away. */
-  bloom.addEventListener("click", () => {
+  sway.addEventListener("click", () => {
     sway.classList.remove("shaking");
-    void sway.offsetWidth;                                // restart the shake
+    void sway.offsetWidth;
     sway.classList.add("shaking");
     setTimeout(() => sway.classList.remove("shaking"), 900);
-    dropPetals(5 + Math.floor(Math.random() * 4));        // 5 to 8 pieces
+    dropPetals(5 + Math.floor(Math.random() * 4));
   });
 }
 

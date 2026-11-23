@@ -24,7 +24,7 @@ for (let i = 0; i < 12; i++) {
 }
 
 /* Background music: starts the moment she says Yes. */
-const music = new Audio("Audio/song.mp3");   // change to your mp3 path
+const music = new Audio("mp3/[FREE] Acoustic Guitar x Piano Type Beat Pop Instrumental i do.mp3");   // change to your mp3 path
 music.loop = true;
 music.volume = 0.7;
 music.preload = "auto";

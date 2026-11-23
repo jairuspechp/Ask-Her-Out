@@ -23,6 +23,27 @@ for (let i = 0; i < 12; i++) {
   ticksEl.appendChild(t);
 }
 
+/* Background music: starts the moment she says Yes. */
+const music = new Audio("Audio/song.mp3");   // change to your mp3 path
+music.loop = true;
+music.volume = 0.7;
+music.preload = "auto";
+
+function playMusic() {
+  music.currentTime = 0;
+  music.play().catch(() => {
+    /* Browser blocked autoplay (can happen on the auto-Yes timer).
+       Retry on the very next tap or click. */
+    const retry = () => {
+      music.play();
+      window.removeEventListener("pointerdown", retry);
+      window.removeEventListener("keydown", retry);
+    };
+    window.addEventListener("pointerdown", retry);
+    window.addEventListener("keydown", retry);
+  });
+}
+
 /* One photo per color theme. Swap any link for your own file. */
 const PHOTOS = {
   rose:     "Img/Rafflesia-255_1500x.jpg",   //Flower, 
@@ -266,8 +287,21 @@ function sayYes(auto) {
     ? "No answer means YES! I knew it 💕 I'll pick the time and place, get ready! first of..."
     : "You said YES! I knew it 💕 I'll pick the time and place, get ready! first of...";
   launchHearts();
+  playMusic(); 
   setTimeout(showPhoto, 5500);          // image pops up after the animals
 }
+
+/* Unlock audio on the first touch/click anywhere, so the timer-Yes can play sound. */
+function unlockAudio() {
+  music.muted = true;
+  music.play().then(() => {
+    music.pause();
+    music.currentTime = 0;
+    music.muted = false;
+  }).catch(() => {});
+  window.removeEventListener("pointerdown", unlockAudio);
+}
+window.addEventListener("pointerdown", unlockAudio);
 
 
 function launchHearts() {
